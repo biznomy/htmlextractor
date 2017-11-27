@@ -14,10 +14,12 @@ public class ScrappedData implements Serializable {
 
 	@Id
 	private String id;
+	private boolean zeroStage = false;
 	private boolean firstStage = false;
 	private boolean secondStage = false;
 	private String url;
 	private String html;
+	private String failed;
 	private List<String> emails = new ArrayList<String>();
 	private List<String> contacts = new ArrayList<String>();
 	private List<String> telephone = new ArrayList<String>();
@@ -34,6 +36,14 @@ public class ScrappedData implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public boolean isZeroStage() {
+		return zeroStage;
+	}
+
+	public void setZeroStage(boolean zeroStage) {
+		this.zeroStage = zeroStage;
 	}
 
 	public boolean isFirstStage() {
@@ -66,6 +76,14 @@ public class ScrappedData implements Serializable {
 
 	public void setHtml(String html) {
 		this.html = html;
+	}
+
+	public String getFailed() {
+		return failed;
+	}
+
+	public void setFailed(String failed) {
+		this.failed = failed;
 	}
 
 	public List<String> getEmails() {

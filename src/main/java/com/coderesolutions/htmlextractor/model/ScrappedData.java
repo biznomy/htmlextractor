@@ -20,6 +20,7 @@ public class ScrappedData implements Serializable {
 	private String url;
 	private String html;
 	private String failed;
+	private String state;
 	private List<String> emails = new ArrayList<String>();
 	private List<String> contacts = new ArrayList<String>();
 	private List<String> telephone = new ArrayList<String>();
@@ -84,6 +85,14 @@ public class ScrappedData implements Serializable {
 
 	public void setFailed(String failed) {
 		this.failed = failed;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public List<String> getEmails() {

@@ -14,25 +14,20 @@ public class ScrappedDataSchedular {
 	@Autowired
 	ScrappedDataService scrappedDataService; 
 	
-	@Scheduled(initialDelay = 5000, fixedDelay = 40000)
+	@Scheduled(fixedDelay = 1000)
 	public void schedularOne() {
-		System.out.println(new Date());
-		System.out.println("zero");
+		System.err.println("zero : "+ new Date());		
 		scrappedDataService.findByZeroStage();
 	}
 	
-	@Scheduled(initialDelay = 10000, fixedDelay = 40000)
-	public void schedularSecond() {
-		System.out.println(new Date());
-		System.out.println("first");
-		scrappedDataService.findByFirstStage();
-	}
-	
-	@Scheduled(initialDelay = 20000, fixedDelay = 40000)
-	public void schedularThird() {
-		System.out.println(new Date());
-		System.out.println("second");
-		scrappedDataService.findBySecondStage();
-	}
+//	@Scheduled(fixedDelay = 40000)
+//	public void schedularSecond() {
+//		scrappedDataService.findByFirstStage();
+//	}
+//	
+//	@Scheduled(fixedDelay = 40000)
+//	public void schedularThird() {
+//		scrappedDataService.findBySecondStage();
+//	}
 
 }

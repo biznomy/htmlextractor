@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -129,7 +130,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 			try{
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {				
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
-					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());				
+					miscService.filterContacts(contacts, new HashSet<String>(scrappedData.getMobile()), new HashSet<String>(scrappedData.getTelephone()));				
 					scrappedData.setSecondStage(true);
 					scrappedDataRepository.save(scrappedData);					
 				}

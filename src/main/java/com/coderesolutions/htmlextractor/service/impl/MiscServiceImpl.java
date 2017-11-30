@@ -165,7 +165,7 @@ public class MiscServiceImpl implements MiscService {
 	
 	
 	
-	private Set<String> getEmails(String value) {
+	public Set<String> getEmails(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
 		Pattern pattern = Pattern
@@ -177,7 +177,7 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 
-	private Set<String> getContacts(String value) {
+	public Set<String> getContacts(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
 		Pattern pattern2 = Pattern.compile("(.\\d+[ _ -.]*){2,20}");
@@ -192,10 +192,10 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 
-	private Set<String> getFacebook(String value) {
+	public Set<String> getFacebook(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
-		String[] socialRegex = new String[] {"(http://|https://)(www.)?(facebook.com)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
+		String[] socialRegex = new String[] {"(http://|https://)(www.)?(facebook.com|fb.com)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
 		for (String regex : socialRegex) {
 
 			Pattern socialPattern = Pattern.compile(regex);
@@ -207,10 +207,10 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 	
-	private Set<String> getTwitter(String value) {
+	public Set<String> getTwitter(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
-		String[] socialRegex = new String[] {"(http://|https://)(www.)?(twitter.com)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
+		String[] socialRegex = new String[] {"(http://|https://)(www.)?(twitter.com|t.co)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
 		for (String regex : socialRegex) {
 
 			Pattern socialPattern = Pattern.compile(regex);
@@ -222,10 +222,10 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 	
-	private Set<String> getLinkedIn(String value) {
+	public Set<String> getLinkedIn(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
-		String[] socialRegex = new String[] {"(http://|https://)(www.)?(linkedin.com)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
+		String[] socialRegex = new String[] {"(http://|https://)(www.)?(linkedin.com|lnkd.in)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
 		for (String regex : socialRegex) {
 
 			Pattern socialPattern = Pattern.compile(regex);
@@ -237,10 +237,10 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 	
-	private Set<String> getYouTube(String value) {
+	public Set<String> getYouTube(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
-		String[] socialRegex = new String[] {"(http://|https://)(www.)?(youtube.com)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
+		String[] socialRegex = new String[] {"(http://|https://)(www.)?(youtube.com|youtu.be)/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?"};
 		for (String regex : socialRegex) {
 
 			Pattern socialPattern = Pattern.compile(regex);
@@ -252,10 +252,10 @@ public class MiscServiceImpl implements MiscService {
 		return stringSet;
 	}
 	
-	private Set<String> getGooglePlus(String value) {
+	public Set<String> getGooglePlus(String value) {
 		Set<String> stringSet = null;
 		stringSet = new HashSet<String>();
-		String[] socialRegex = new String[] {"(http://|https://)(www.)?(plus.google.com)?/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?" };
+		String[] socialRegex = new String[] {"(http://|https://)(www.)?(plus.google.com|goo.gl)?/([a-zA-Z0-9/!$%&'()*+,./:;<=>?@\\^_`{|}~-]*)?" };
 		for (String regex : socialRegex) {
 
 			Pattern socialPattern = Pattern.compile(regex);

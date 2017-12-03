@@ -43,7 +43,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findByZeroStage() {		
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = new PageRequest(0, 5);
 		Page<ScrappedData> list = scrappedDataRepository.findByZeroStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
@@ -74,6 +74,11 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 				}
 				scrappedDataRepository.save(scrappedData);
 				
+			}else {
+				scrappedData.setZeroStage(true);
+				scrappedData.setFirstStage(true);
+				scrappedData.setSecondStage(true);
+				scrappedDataRepository.save(scrappedData);				
 			}					
 		}			
 	}

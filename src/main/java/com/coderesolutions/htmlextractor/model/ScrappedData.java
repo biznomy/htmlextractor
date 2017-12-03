@@ -31,6 +31,24 @@ public class ScrappedData implements Serializable {
 	private List<String> youtube = new ArrayList<String>();
 	private List<String> googleplus = new ArrayList<String>();
 
+	private String country;
+	private String countryCode;
+	private String address;
+	private String phoneNumber;
+	private String internationalPhoneNumber;
+	private String keyword;
+	private String locality;
+	private String name;
+	private String neighborhood;
+	private String placeId;
+	private String postalCode;
+	private String route;
+	private String streetNumber;
+	private String updated;
+	private String mapUrl;
+	private String utcOffset;
+	private String vicinity;
+
 	public String getId() {
 		return id;
 	}
@@ -165,6 +183,142 @@ public class ScrappedData implements Serializable {
 
 	public void setGoogleplus(List<String> googleplus) {
 		this.googleplus = googleplus;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getInternationalPhoneNumber() {
+		return internationalPhoneNumber;
+	}
+
+	public void setInternationalPhoneNumber(String internationalPhoneNumber) {
+		this.internationalPhoneNumber = internationalPhoneNumber;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+
+	public String getPlaceId() {
+		return placeId;
+	}
+
+	public void setPlaceId(String placeId) {
+		this.placeId = placeId;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String route) {
+		this.route = route;
+	}
+
+	public String getStreetNumber() {
+		return streetNumber;
+	}
+
+	public void setStreetNumber(String streetNumber) {
+		this.streetNumber = streetNumber;
+	}
+
+	public String getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(String updated) {
+		this.updated = updated;
+	}
+
+	public String getMapUrl() {
+		return mapUrl;
+	}
+
+	public void setMapUrl(String mapUrl) {
+		this.mapUrl = mapUrl;
+	}
+
+	public String getUtcOffset() {
+		return utcOffset;
+	}
+
+	public void setUtcOffset(String utcOffset) {
+		this.utcOffset = utcOffset;
+	}
+
+	public String getVicinity() {
+		return vicinity;
+	}
+
+	public void setVicinity(String vicinity) {
+		this.vicinity = vicinity;
 	}
 
 }

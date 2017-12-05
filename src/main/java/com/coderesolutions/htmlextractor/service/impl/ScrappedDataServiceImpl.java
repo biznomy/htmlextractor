@@ -104,6 +104,8 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					scrappedData.setFirstStage(true);
 					scrappedDataRepository.save(scrappedData);
 					
+				}else{
+					throw new Exception("html value not found");
 				}				
 				
 			}catch(Exception e){

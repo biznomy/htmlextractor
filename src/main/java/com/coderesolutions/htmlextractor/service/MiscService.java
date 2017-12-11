@@ -1,5 +1,6 @@
 package com.coderesolutions.htmlextractor.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public interface MiscService {
 	public Set<String> getLinkedIn(String value);	
 	public Set<String> getYouTube(String value);	
 	public Set<String> getGooglePlus(String value);	
-	public void filterContacts(String value, Set<String> arrayMobile, Set<String> arrayLandline);	
+	public void filterContacts(String value, List<String> arrayMobile, List<String> arrayLandline);	
 	public void filterAll(String htmlText, Map<String, Set<String>> result);
 
 }

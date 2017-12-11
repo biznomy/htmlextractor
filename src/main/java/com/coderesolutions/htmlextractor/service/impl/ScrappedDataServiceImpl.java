@@ -132,7 +132,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 			try{
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {				
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
-					miscService.filterContacts(contacts, new HashSet<String>(scrappedData.getMobile()), new HashSet<String>(scrappedData.getTelephone()));				
+					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());				
 					scrappedData.setSecondStage(true);
 					scrappedDataRepository.save(scrappedData);					
 				}

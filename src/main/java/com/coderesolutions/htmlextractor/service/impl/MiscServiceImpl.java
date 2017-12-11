@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -275,7 +276,7 @@ public class MiscServiceImpl implements MiscService {
 	 * @param arrayLandline
 	 */
 	@Override
-	public void filterContacts(String value, Set<String> arrayMobile, Set<String> arrayLandline) {
+	public void filterContacts(String value, List<String> arrayMobile, List<String> arrayLandline) {
 		value = value.replaceAll("\\[", "").replaceAll("\\]", "");
 		String[] numbers = StringUtils.commaDelimitedListToStringArray(value);
 		for (String number : numbers) {

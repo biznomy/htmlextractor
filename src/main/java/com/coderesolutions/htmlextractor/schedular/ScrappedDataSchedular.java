@@ -20,16 +20,16 @@ public class ScrappedDataSchedular {
 //		scrappedDataService.findByZeroStage();
 //	}
 	
-//	@Scheduled(fixedDelay = 15000)
-//	public void schedularSecond() {
-//		System.err.println("first : "+ new Date());
-//		scrappedDataService.findByFirstStage();
-//	}
-
 	@Scheduled(fixedDelay = 1000)
-	public void schedularThird() {
-		System.err.println("second : "+ new Date());
-		scrappedDataService.findBySecondStage();
+	public void schedularSecond() {
+		System.err.println("first : "+ new Date());
+		scrappedDataService.findByFirstStage();
 	}
+
+//	@Scheduled(fixedDelay = 1000)
+//	public void schedularThird() {
+//		System.err.println("second : "+ new Date());
+//		scrappedDataService.findBySecondStage();
+//	}
 
 }

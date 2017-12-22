@@ -6,7 +6,6 @@
 	<groupId>com.coderesolutions</groupId>
 	<artifactId>htmlextractor</artifactId>
 	<version>0.0.1</version>
-	<packaging>war</packaging>
 
 	<name>htmlextractor</name>
 	<description>Extract emails and other related info from html</description>
@@ -20,7 +19,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<java.version>1.7</java.version>
 	</properties>
 
 	<dependencies>

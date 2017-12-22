@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,40 +30,43 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 
 	@Autowired
 	ScrappedDataRepository scrappedDataRepository;
-	
+
 	@Autowired
 	MiscService miscService;
-	
+
 	@Override
-	public ScrappedData saveScrappedData(ScrappedData scrappedData){
+	public ScrappedData saveScrappedData(ScrappedData scrappedData) {
 		return scrappedDataRepository.save(scrappedData);
 	}
-	
+
 	@Override
 	@Transactional
-	public void findByZeroStage() {		
+	public void findByZeroStage() {
+		// Random random = new Random();
+		// int number = random.nextInt((5000 - 100) + 1) + 100;
+		// Pageable pageable = new PageRequest(number, 10);
 		Pageable pageable = new PageRequest(0, 10);
 		Page<ScrappedData> list = scrappedDataRepository.findByZeroStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
-			
+
 			if (scrappedData.getUrl() != null && !scrappedData.getUrl().isEmpty()) {
-				
+
 				URL url = null;
 				Document doc = null;
 				try {
-					url = new URL(scrappedData.getUrl());					
+					url = new URL(scrappedData.getUrl());
 				} catch (MalformedURLException malformedURLException) {
 					scrappedData.setFailed(malformedURLException.getMessage());
 					scrappedData.setFirstStage(true);
 					scrappedData.setSecondStage(true);
 				}
 				scrappedData.setZeroStage(true);
-				
+
 				Connection connection = Jsoup.connect(url.toString());
 				try {
-					connection.timeout(1000 * 30); 
+					connection.timeout(1000 * 30);
 					doc = connection.get();
 					scrappedData.setHtml(doc.html());
 				} catch (IOException | NullPointerException e) {
@@ -73,25 +75,26 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					scrappedData.setSecondStage(true);
 				}
 				scrappedDataRepository.save(scrappedData);
-				
-			}					
-		}			
+
+			}
+		}
 	}
-	
+
 	@Override
 	@Transactional
-	public void findByFirstStage() {		
+	public void findByFirstStage() {
+		// Random random = new Random();
+		// int number = random.nextInt((5000 - 100) + 1) + 100;
+		// Pageable pageable = new PageRequest(number, 10);
 		Pageable pageable = new PageRequest(0, 10);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
-			
-			
-			try{
-				
+			try {
+
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
-					
+
 					Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 					miscService.filterAll(scrappedData.getHtml(), result);
 					scrappedData.setEmails(new ArrayList<String>(result.get("email")));
@@ -103,50 +106,43 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					scrappedData.setGoogleplus(new ArrayList<String>(result.get("googleplus")));
 					scrappedData.setFirstStage(true);
 					scrappedDataRepository.save(scrappedData);
-					
-				}else{
+
+				} else {
 					throw new Exception("html value not found");
-				}				
-				
-			}catch(Exception e){
+				}
+
+			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setFirstStage(true);
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
 			}
-			
-			
-					
 		}
 	}
-	
-	
+
 	@Override
 	@Transactional
-	public void findBySecondStage() {		
+	public void findBySecondStage() {
+		// Random random = new Random();
+		// int number = random.nextInt((5000 - 100) + 1) + 100;
+		// Pageable pageable = new PageRequest(number, 10);
 		Pageable pageable = new PageRequest(0, 10);
 		Page<ScrappedData> list = scrappedDataRepository.findBySecondStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
-			try{
-				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {				
+			try {
+				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
-					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());				
+					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());
 					scrappedData.setSecondStage(true);
-					scrappedDataRepository.save(scrappedData);					
+					scrappedDataRepository.save(scrappedData);
 				}
-			}catch(Exception e){
+			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
 			}
-			
-					
 		}
 	}
-	
-	
-	
-
 }

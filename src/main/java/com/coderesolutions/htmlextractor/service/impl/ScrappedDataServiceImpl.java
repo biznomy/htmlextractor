@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,8 @@ import com.coderesolutions.htmlextractor.service.ScrappedDataService;
 @Service
 public class ScrappedDataServiceImpl implements ScrappedDataService {
 
+	private static Set<String> inQueue = new HashSet<String>(); 
+	
 	@Autowired
 	MiscService miscService;
 
@@ -94,6 +97,12 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
+			
+			if(!inQueue.contains(scrappedData.getId())) {
+				inQueue.add(scrappedData.getId());
+			}else {
+				break;
+			}
 			logger.info(scrappedData.toString());
 			
 			try {
@@ -121,6 +130,8 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 				scrappedData.setFirstStage(true);
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
+			}finally {
+				inQueue.remove(scrappedData.getId());
 			}
 		}
 	}

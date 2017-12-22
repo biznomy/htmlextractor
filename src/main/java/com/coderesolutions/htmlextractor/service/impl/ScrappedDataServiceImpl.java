@@ -12,6 +12,8 @@ import java.util.Set;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,27 +32,29 @@ import com.coderesolutions.htmlextractor.service.ScrappedDataService;
 public class ScrappedDataServiceImpl implements ScrappedDataService {
 
 	@Autowired
-	ScrappedDataRepository scrappedDataRepository;
+	MiscService miscService;
 
 	@Autowired
-	MiscService miscService;
+	ScrappedDataRepository scrappedDataRepository;
+	
+	Logger logger = LoggerFactory.getLogger(ScrappedDataServiceImpl.class);
+
 
 	@Override
 	public ScrappedData saveScrappedData(ScrappedData scrappedData) {
 		return scrappedDataRepository.save(scrappedData);
 	}
 
+	@Async
 	@Override
 	@Transactional
 	public void findByZeroStage() {
-		// Random random = new Random();
-		// int number = random.nextInt((5000 - 100) + 1) + 100;
-		// Pageable pageable = new PageRequest(number, 10);
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = new PageRequest(0, 1);
 		Page<ScrappedData> list = scrappedDataRepository.findByZeroStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
+			logger.info(scrappedData.toString());
 
 			if (scrappedData.getUrl() != null && !scrappedData.getUrl().isEmpty()) {
 
@@ -85,11 +89,13 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findByFirstStage() {
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = new PageRequest(0, 1);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
+			logger.info(scrappedData.toString());
+			
 			try {
 
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
@@ -119,17 +125,16 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		}
 	}
 
+	@Async
 	@Override
 	@Transactional
 	public void findBySecondStage() {
-		// Random random = new Random();
-		// int number = random.nextInt((5000 - 100) + 1) + 100;
-		// Pageable pageable = new PageRequest(number, 10);
-		Pageable pageable = new PageRequest(0, 10);
+		Pageable pageable = new PageRequest(0, 1);
 		Page<ScrappedData> list = scrappedDataRepository.findBySecondStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
+			logger.info(scrappedData.toString());
 			try {
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");

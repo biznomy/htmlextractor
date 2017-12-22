@@ -167,4 +167,13 @@ public class ScrappedData implements Serializable {
 		this.googleplus = googleplus;
 	}
 
+	@Override
+	public String toString() {
+		return "ScrappedData [id=" + id + ", zeroStage=" + zeroStage
+				+ ", firstStage=" + firstStage + ", secondStage=" + secondStage
+				+ ", url=" + url + ", html=" + html.substring(0, 25) + "]";
+	}
+
+	
+	
 }

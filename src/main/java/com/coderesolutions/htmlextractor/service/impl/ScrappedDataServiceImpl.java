@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -80,12 +81,10 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		}
 	}
 
+	@Async
 	@Override
 	@Transactional
 	public void findByFirstStage() {
-		// Random random = new Random();
-		// int number = random.nextInt((5000 - 100) + 1) + 100;
-		// Pageable pageable = new PageRequest(number, 10);
 		Pageable pageable = new PageRequest(0, 10);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();

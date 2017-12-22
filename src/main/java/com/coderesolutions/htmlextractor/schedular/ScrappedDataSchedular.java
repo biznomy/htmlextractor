@@ -20,7 +20,7 @@ public class ScrappedDataSchedular {
 //		scrappedDataService.findByZeroStage();
 //	}
 	
-	@Scheduled(fixedDelay = 1000)
+	@Scheduled(fixedDelay = 1000 * 30)
 	public void schedularSecond() {
 		System.err.println("first : "+ new Date());
 		scrappedDataService.findByFirstStage();

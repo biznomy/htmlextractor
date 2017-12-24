@@ -32,7 +32,8 @@ import com.coderesolutions.htmlextractor.service.ScrappedDataService;
 @Service
 public class ScrappedDataServiceImpl implements ScrappedDataService {
 
-	private static Set<String> inQueue = new HashSet<String>(); 
+	private static Set<String> inQueue = new HashSet<String>();
+	private static int count = 0;
 	
 	@Autowired
 	MiscService miscService;
@@ -95,17 +96,23 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Pageable pageable = new PageRequest(0, 1);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
+		System.out.println(list.getTotalElements());
 		while (it.hasNext()) {
-			ScrappedData scrappedData = (ScrappedData) it.next();
-			
-			if(!inQueue.contains(scrappedData.getId())) {
-				inQueue.add(scrappedData.getId());
-			}else {
-				break;
-			}
-			logger.info(scrappedData.toString());
-			
+			ScrappedData scrappedData = (ScrappedData) it.next();		
 			try {
+				
+				if(count > 5) {
+					count = 0;
+					throw new Exception("max number of retry reached");
+				}
+				
+				if(!inQueue.contains(scrappedData.getId())) {
+					inQueue.add(scrappedData.getId());
+				}else {
+					count++;
+					break;
+				}
+				logger.info(scrappedData.toString());
 
 				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
 
@@ -120,18 +127,21 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					scrappedData.setGoogleplus(new ArrayList<String>(result.get("googleplus")));
 					scrappedData.setFirstStage(true);
 					scrappedDataRepository.save(scrappedData);
+					inQueue.remove(scrappedData.getId());
 
 				} else {
 					throw new Exception("html value not found");
 				}
+				
 
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setFirstStage(true);
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-			}finally {
 				inQueue.remove(scrappedData.getId());
+			}finally {
+				
 			}
 		}
 	}

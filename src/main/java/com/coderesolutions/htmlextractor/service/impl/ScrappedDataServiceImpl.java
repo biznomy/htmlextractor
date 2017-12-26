@@ -168,14 +168,18 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					count++;
 					break;
 				}
+				logger.info(scrappedData.toString());
+				
 				
 				if (scrappedData.getContacts() != null && scrappedData.getContacts().size() > 0) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
-					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());
-					scrappedData.setSecondStage(true);
-					scrappedDataRepository.save(scrappedData);
-					inQueue.remove(scrappedData.getId());
+					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());					
 				}
+				
+				scrappedData.setSecondStage(true);
+				scrappedDataRepository.save(scrappedData);
+				inQueue.remove(scrappedData.getId());
+				
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setSecondStage(true);

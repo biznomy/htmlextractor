@@ -96,7 +96,6 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Pageable pageable = new PageRequest(0, 1);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
-		System.out.println(list.getTotalElements());
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();		
 			try {
@@ -157,16 +156,31 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 			ScrappedData scrappedData = (ScrappedData) it.next();
 			logger.info(scrappedData.toString());
 			try {
-				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
+				
+				if(count > 5) {
+					count = 0;
+					throw new Exception("max number of retry reached");
+				}
+				
+				if(!inQueue.contains(scrappedData.getId())) {
+					inQueue.add(scrappedData.getId());
+				}else {
+					count++;
+					break;
+				}
+				
+				if (scrappedData.getContacts() != null && scrappedData.getContacts().size() > 0) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
 					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());
 					scrappedData.setSecondStage(true);
 					scrappedDataRepository.save(scrappedData);
+					inQueue.remove(scrappedData.getId());
 				}
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
+				inQueue.remove(scrappedData.getId());
 			}
 		}
 	}

@@ -1,14 +1,18 @@
 package com.coderesolutions.htmlextractor.service.impl;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -31,9 +35,6 @@ import com.coderesolutions.htmlextractor.service.ScrappedDataService;
 
 @Service
 public class ScrappedDataServiceImpl implements ScrappedDataService {
-
-	private static Set<String> inQueue = new HashSet<String>();
-	private static int count = 0;
 
 	@Autowired
 	MiscService miscService;
@@ -95,51 +96,56 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Pageable pageable = new PageRequest(0, 5000);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
+		ExecutorService executor = Executors.newSingleThreadExecutor();
 		while (it.hasNext()) {
-			ScrappedData scrappedData = (ScrappedData) it.next();
+			final ScrappedData scrappedData = (ScrappedData) it.next();
 			try {
+				class Task implements Callable<String> {
+					@Override
+					public String call() throws Exception {
+						logger.info(scrappedData.toString());
 
-				if (count > 5) {
-					count = 0;
-					throw new Exception("max number of retry reached");
+						if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
+
+							Map<String, Set<String>> result = new HashMap<String, Set<String>>();
+							miscService.filterAll(scrappedData.getHtml(), result);
+							scrappedData.setEmails(new ArrayList<String>(result.get("email")));
+							scrappedData.setContacts(new ArrayList<String>(result.get("contact")));
+							scrappedData.setFacebook(new ArrayList<String>(result.get("facebook")));
+							scrappedData.setTwitter(new ArrayList<String>(result.get("twitter")));
+							scrappedData.setLinkedin(new ArrayList<String>(result.get("linkedin")));
+							scrappedData.setYoutube(new ArrayList<String>(result.get("youtube")));
+							scrappedData.setGoogleplus(new ArrayList<String>(result.get("googleplus")));
+							scrappedData.setFirstStage(true);
+							scrappedDataRepository.save(scrappedData);
+						}
+						return "Ready!";
+					}
 				}
 
-				if (!inQueue.contains(scrappedData.getId())) {
-					inQueue.add(scrappedData.getId());
-				} else {
-					count++;
-					break;
+				Future<String> future = executor.submit(new Task());
+
+				try {
+					// System.out.println("Started..");
+					System.out.println(future.get(3, TimeUnit.SECONDS));
+					// System.out.println("Finished!");
+				} catch (TimeoutException e) {
+					future.cancel(true);
+					// System.out.println("Terminated!");
+					throw new Exception("Terminated!");
 				}
-				logger.info(scrappedData.toString());
 
-				if (scrappedData.getHtml() != null && !scrappedData.getHtml().isEmpty()) {
-
-					Map<String, Set<String>> result = new HashMap<String, Set<String>>();
-					miscService.filterAll(scrappedData.getHtml(), result);
-					scrappedData.setEmails(new ArrayList<String>(result.get("email")));
-					scrappedData.setContacts(new ArrayList<String>(result.get("contact")));
-					scrappedData.setFacebook(new ArrayList<String>(result.get("facebook")));
-					scrappedData.setTwitter(new ArrayList<String>(result.get("twitter")));
-					scrappedData.setLinkedin(new ArrayList<String>(result.get("linkedin")));
-					scrappedData.setYoutube(new ArrayList<String>(result.get("youtube")));
-					scrappedData.setGoogleplus(new ArrayList<String>(result.get("googleplus")));
-					scrappedData.setFirstStage(true);
-					scrappedDataRepository.save(scrappedData);
-					inQueue.remove(scrappedData.getId());
-
-				} else {
-					throw new Exception("html value not found");
-				}
 			} catch (Exception e) {
+
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setFirstStage(true);
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-				inQueue.remove(scrappedData.getId());
-			} finally {
-
+				System.err.println(scrappedData.getFailed());
 			}
+
 		}
+		executor.shutdownNow();
 	}
 
 	@Async
@@ -151,22 +157,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
-			// logger.info(scrappedData.toString());
 			try {
-
-				// if(count > 5) {
-				// count = 0;
-				// throw new Exception("max number of retry reached");
-				// }
-				//
-				// if(!inQueue.contains(scrappedData.getId())) {
-				// inQueue.add(scrappedData.getId());
-				// }else {
-				// count++;
-				// break;
-				// }
-				// logger.info(scrappedData.toString());
-				//
 
 				if (scrappedData.getContacts() != null && scrappedData.getContacts().size() > 0) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
@@ -175,13 +166,11 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-				// inQueue.remove(scrappedData.getId());
 
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-				// inQueue.remove(scrappedData.getId());
 			}
 		}
 	}

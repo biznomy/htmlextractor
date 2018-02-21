@@ -154,7 +154,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findBySecondStage() {
-		Pageable pageable = new PageRequest(0, 2000);
+		Pageable pageable = new PageRequest(0, 5000);
 		Page<ScrappedData> list = scrappedDataRepository.findByContactCount(pageable, true);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
@@ -168,6 +168,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
+				logger.info(scrappedData.toString());
 
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());

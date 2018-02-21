@@ -96,7 +96,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 		Pageable pageable = new PageRequest(0, 5000);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
-		ExecutorService executor = Executors.newSingleThreadExecutor();
+		
 		while (it.hasNext()) {
 			final ScrappedData scrappedData = (ScrappedData) it.next();
 			try {
@@ -122,7 +122,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 						return "Ready!";
 					}
 				}
-
+				ExecutorService executor = Executors.newSingleThreadExecutor();
 				Future<String> future = executor.submit(new Task());
 
 				try {
@@ -134,6 +134,8 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					// System.out.println("Terminated!");
 					throw new Exception("Terminated!");
 				}
+				
+				executor.shutdownNow();
 
 			} catch (Exception e) {
 
@@ -145,7 +147,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 			}
 
 		}
-		executor.shutdownNow();
+		
 	}
 
 	@Async

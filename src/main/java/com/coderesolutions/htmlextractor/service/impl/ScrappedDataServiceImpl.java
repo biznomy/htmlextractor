@@ -34,15 +34,14 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 
 	private static Set<String> inQueue = new HashSet<String>();
 	private static int count = 0;
-	
+
 	@Autowired
 	MiscService miscService;
 
 	@Autowired
 	ScrappedDataRepository scrappedDataRepository;
-	
-	Logger logger = LoggerFactory.getLogger(ScrappedDataServiceImpl.class);
 
+	Logger logger = LoggerFactory.getLogger(ScrappedDataServiceImpl.class);
 
 	@Override
 	public ScrappedData saveScrappedData(ScrappedData scrappedData) {
@@ -53,7 +52,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findByZeroStage() {
-		Pageable pageable = new PageRequest(0, 1);
+		Pageable pageable = new PageRequest(0, 10000);
 		Page<ScrappedData> list = scrappedDataRepository.findByZeroStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
@@ -78,7 +77,7 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 					connection.timeout(1000 * 30);
 					doc = connection.get();
 					scrappedData.setHtml(doc.html());
-				} catch (IOException | NullPointerException e) {
+				} catch (Exception e) {
 					scrappedData.setFailed(e.getMessage());
 					scrappedData.setFirstStage(true);
 					scrappedData.setSecondStage(true);
@@ -93,21 +92,21 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findByFirstStage() {
-		Pageable pageable = new PageRequest(0, 1);
+		Pageable pageable = new PageRequest(0, 5000);
 		Page<ScrappedData> list = scrappedDataRepository.findByFirstStage(pageable, false);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
-			ScrappedData scrappedData = (ScrappedData) it.next();		
+			ScrappedData scrappedData = (ScrappedData) it.next();
 			try {
-				
-				if(count > 5) {
+
+				if (count > 5) {
 					count = 0;
 					throw new Exception("max number of retry reached");
 				}
-				
-				if(!inQueue.contains(scrappedData.getId())) {
+
+				if (!inQueue.contains(scrappedData.getId())) {
 					inQueue.add(scrappedData.getId());
-				}else {
+				} else {
 					count++;
 					break;
 				}
@@ -131,16 +130,14 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 				} else {
 					throw new Exception("html value not found");
 				}
-				
-
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setFirstStage(true);
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
 				inQueue.remove(scrappedData.getId());
-			}finally {
-				
+			} finally {
+
 			}
 		}
 	}
@@ -149,42 +146,42 @@ public class ScrappedDataServiceImpl implements ScrappedDataService {
 	@Override
 	@Transactional
 	public void findBySecondStage() {
-		Pageable pageable = new PageRequest(0, 1);
-		Page<ScrappedData> list = scrappedDataRepository.findBySecondStage(pageable, false);
+		Pageable pageable = new PageRequest(0, 2000);
+		Page<ScrappedData> list = scrappedDataRepository.findByContactCount(pageable, true);
 		Iterator<ScrappedData> it = list.iterator();
 		while (it.hasNext()) {
 			ScrappedData scrappedData = (ScrappedData) it.next();
-			logger.info(scrappedData.toString());
+			// logger.info(scrappedData.toString());
 			try {
-				
-				if(count > 5) {
-					count = 0;
-					throw new Exception("max number of retry reached");
-				}
-				
-				if(!inQueue.contains(scrappedData.getId())) {
-					inQueue.add(scrappedData.getId());
-				}else {
-					count++;
-					break;
-				}
-				logger.info(scrappedData.toString());
-				
-				
+
+				// if(count > 5) {
+				// count = 0;
+				// throw new Exception("max number of retry reached");
+				// }
+				//
+				// if(!inQueue.contains(scrappedData.getId())) {
+				// inQueue.add(scrappedData.getId());
+				// }else {
+				// count++;
+				// break;
+				// }
+				// logger.info(scrappedData.toString());
+				//
+
 				if (scrappedData.getContacts() != null && scrappedData.getContacts().size() > 0) {
 					String contacts = StringUtils.collectionToDelimitedString(scrappedData.getContacts(), ",");
-					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());					
+					miscService.filterContacts(contacts, scrappedData.getMobile(), scrappedData.getTelephone());
 				}
-				
+
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-				inQueue.remove(scrappedData.getId());
-				
+				// inQueue.remove(scrappedData.getId());
+
 			} catch (Exception e) {
 				scrappedData.setFailed(e.getMessage());
 				scrappedData.setSecondStage(true);
 				scrappedDataRepository.save(scrappedData);
-				inQueue.remove(scrappedData.getId());
+				// inQueue.remove(scrappedData.getId());
 			}
 		}
 	}

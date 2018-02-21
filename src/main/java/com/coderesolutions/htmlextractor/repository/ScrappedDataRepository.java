@@ -18,6 +18,9 @@ public interface ScrappedDataRepository extends MongoRepository<ScrappedData, St
 	@Query("{ 'secondStage' : ?0 }")	
 	Page<ScrappedData> findBySecondStage(Pageable pageable, boolean secondStage);
 	
+	@Query("{ 'contacts.0': { $exists: ?0 } }")	
+	Page<ScrappedData> findByContactCount(Pageable pageable, boolean secondStage);
+	
 	
 
 }

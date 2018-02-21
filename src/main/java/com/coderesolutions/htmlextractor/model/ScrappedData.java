@@ -171,7 +171,7 @@ public class ScrappedData implements Serializable {
 	public String toString() {
 		return "ScrappedData [id=" + id + ", zeroStage=" + zeroStage
 				+ ", firstStage=" + firstStage + ", secondStage=" + secondStage
-				+ ", url=" + url + ", html=" + html.substring(0, 25) + "]";
+				+ ", url=" + url + "]";
 	}
 
 	
